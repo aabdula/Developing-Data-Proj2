@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Developing Data Project</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Developing Data Project">
+  <meta name="author" content="Abdul">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="./assets/css/ribbons.css"></link>
+
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <hgroup class="auto-fadein">
+    <h1>Developing Data Project</h1>
+    <h2>Mcars Prediction</h2>
+    <p>Abdul<br/>Student</p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <article data-timings="">
+    <ol>
+<li>Summary</li>
+</ol>
+
+<p>There is a set of variables related to miles per gallon (MPG) (outcome).</p>
+
+<p>Here the difference of the MPG between automatic and manual transmissions is focused, the mtcars dataset in car package is taken as the data source, and techniques about regression models is used to solve the following two questions:</p>
+
+<p>(a) &quot;whether an automatic or manual transmission better for MPG&quot;
+   (b) &quot;Quantifying the different between the MPG automatic and manual transmissions?&quot;</p>
+
+<p>2 Part 2 of The Project
+2.1 Load and Test Data</p>
+
+<pre><code>The data was extracted from the 1974 Motor Trend US magazine, and comprises fuel consumption and 10 aspects of automobile design and performance for 32 automobiles (1973-74 models).
+</code></pre>
+
+<pre><code class="r">library(datasets)
+mpgData &lt;- with(mtcars, data.frame(mpg, am))
+mpgData$am &lt;- factor(mpgData$am, labels = c(&quot;Automatic&quot;, &quot;Manual&quot;))
+#summary(mpgData)
+</code></pre>
+
+<p>2.2 Data Processing 
+2.2.1 (a): whether an automatic or manual transmission better for MPG?</p>
+
+<pre><code class="r">summary(mpgData[mpgData$am == &quot;Automatic&quot;,])
+</code></pre>
+
+<pre><code>##       mpg                am    
+##  Min.   :10.40   Automatic:19  
+##  1st Qu.:14.95   Manual   : 0  
+##  Median :17.30                 
+##  Mean   :17.15                 
+##  3rd Qu.:19.20                 
+##  Max.   :24.40
+</code></pre>
+
+<pre><code class="r">summary(mpgData[mpgData$am == &quot;Manual&quot;,])
+</code></pre>
+
+<pre><code>##       mpg                am    
+##  Min.   :15.00   Automatic: 0  
+##  1st Qu.:21.00   Manual   :13  
+##  Median :22.80                 
+##  Mean   :24.39                 
+##  3rd Qu.:30.40                 
+##  Max.   :33.90
+</code></pre>
+
+<p>2.2.2 (b): Quantifying the different between the MPG automatic and manual transmissions?</p>
+
+<pre><code class="r">fit &lt;- lm(mpg ~ as.integer(am), data=mpgData)
+summary(fit)
+</code></pre>
+
+<pre><code>## 
+## Call:
+## lm(formula = mpg ~ as.integer(am), data = mpgData)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -9.3923 -3.0923 -0.2974  3.2439  9.5077 
+## 
+## Coefficients:
+##                Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)       9.902      2.628   3.768 0.000720 ***
+## as.integer(am)    7.245      1.764   4.106 0.000285 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 4.902 on 30 degrees of freedom
+## Multiple R-squared:  0.3598, Adjusted R-squared:  0.3385 
+## F-statistic: 16.86 on 1 and 30 DF,  p-value: 0.000285
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-2" style="background:;">
+  <article data-timings="">
+    <p>3 Analysis</p>
+
+<p>It appears that the manual transmission is better than automatic MPG, by of increased by 7.2449.
+4 Appendix
+3.1 Fig 1. MPG between automatic and manual transmissions</p>
+
+<pre><code class="r">par(mfrow = c(1, 2))
+with(mtcars, boxplot(mpg/30, disp/80, hp/80, drat, wt, qsec/20, main = &quot;Scaled boxplots; mtcars&quot;), 
+    xlab = &quot;Continuous variable&quot;, ylab = &quot;Scale (adjusted to allow simultaneous display&quot;)
+axisnames &lt;- c(&quot;MPG/10&quot;, &quot;DISP/50&quot;, &quot;HP/50&quot;, &quot;drat&quot;, &quot;wt&quot;, &quot;qsec/5&quot;)
+axis(1, at = c(2, 4, 6, 8, 10, 12), labels = axisnames, las = 2.5, cex.axis = 1.0, 
+    tck = 0.05)
+pairs(mtcars)
+</code></pre>
+
+<p><img src="assets/fig/unnamed-chunk-5-1.png" alt="plot of chunk unnamed-chunk-5"> <img src="assets/fig/unnamed-chunk-5-2.png" alt="plot of chunk unnamed-chunk-5"> </p>
+
+<p>From scaled boxplots that the continuous variables are skew, and outlying values for horsepower, weight, and quarter mile speed. Transformations could be required. lets note from the Appendix that  categorical variables have sufficient frequencies in all cells for  regression models and are ordinal, so usable in linear models.<br>
+Also lets examine bivariate plots of variables.The relationship between (automatic vs manual) transmission and fuel consumption ; manual transmissions yielding higher values of MPG.  However, there are  relationships between fuel consumption and other variables (cylinders, engine displacement, weight).  Transmission  looks to be correlated with some of these potential predictors, an important question is to what extent transmission independently affects fuel economy. 
+Now ascertain whether fuel consumption differs between manual and automatic transmission cars, and quantify this.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-3" style="background:;">
+  <article data-timings="">
+    <p>Fig 2.</p>
+
+<pre><code class="r">par(mfrow=c(1,2))
+with(mpgData,{
+     boxplot(mpg ~ am, 
+             ylab = &quot;miles per gallon (MPG)&quot;)
+     plot(mpg ~ as.integer(am),
+             xlab = &quot;Automatic (1) or Manual(2)&quot;,
+             ylab = &quot;miles per gallon (MPG)&quot;)
+     abline(fit, col=2)
+     })
+</code></pre>
+
+<p><img src="assets/fig/unnamed-chunk-6-1.png" alt="plot of chunk unnamed-chunk-6"> </p>
+
+<p>Fig 3.</p>
+
+<pre><code class="r">mtcarsregmodel &lt;- lm(mpg ~ am, data = mtcars)
+summary(mtcarsregmodel)
+</code></pre>
+
+<pre><code>## 
+## Call:
+## lm(formula = mpg ~ am, data = mtcars)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -9.3923 -3.0923 -0.2974  3.2439  9.5077 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   17.147      1.125  15.247 1.13e-15 ***
+## am             7.245      1.764   4.106 0.000285 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 4.902 on 30 degrees of freedom
+## Multiple R-squared:  0.3598, Adjusted R-squared:  0.3385 
+## F-statistic: 16.86 on 1 and 30 DF,  p-value: 0.000285
+</code></pre>
+
+<p>Transmission accounts for 36% of the variance in fuel consumption, that&#39;s statistically significantly better than chance (p &lt; .0003). The intercept and slope coefficients shows that automatic transmissions achieve 17.147 miles per gallon fuel economy and that manual transmission cars achieve 24.39 miles per gallon fuel economy, on average.
+These point estimates, are expressed at a 95% Confidence Intervals, for which we use the t.test method in R</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-4" style="background:;">
+  <article data-timings="">
+    <p>4 Appendix
+4.1 </p>
+
+<pre><code class="r">with(mtcars, table(cyl))
+</code></pre>
+
+<pre><code>## cyl
+##  4  6  8 
+## 11  7 14
+</code></pre>
+
+<pre><code class="r">with(mtcars, table(am))
+</code></pre>
+
+<pre><code>## am
+##  0  1 
+## 19 13
+</code></pre>
+
+<pre><code class="r">with(mtcars, table(gear))
+</code></pre>
+
+<pre><code>## gear
+##  3  4  5 
+## 15 12  5
+</code></pre>
+
+<pre><code class="r">with(mtcars, table(carb))
+</code></pre>
+
+<pre><code>## carb
+##  1  2  3  4  6  8 
+##  7 10  3 10  1  1
+</code></pre>
+
+<pre><code class="r">with(mtcars, table(vs))
+</code></pre>
+
+<pre><code>## vs
+##  0  1 
+## 18 14
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title=''>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title=''>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title=''>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title=''>
+         4
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>
